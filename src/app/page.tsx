@@ -17,6 +17,19 @@ export default function Home() {
           />
         </div>
 
+        {/* Header / Navigation */}
+        <header className="absolute top-0 left-0 right-0 z-20 p-6 flex justify-between items-center container mx-auto">
+          <div className="text-[#E8DCC4] font-bold text-xl tracking-widest">RENNALE</div>
+          <div className="flex gap-4">
+            <a href="/login" className="px-6 py-2 text-[#E8DCC4] hover:text-white transition-colors font-medium">
+              Login
+            </a>
+            <a href="/login" className="px-6 py-2 bg-[#E3C099] text-[#5D4037] rounded-full font-bold hover:bg-[#dcb080] transition-colors">
+              Signup
+            </a>
+          </div>
+        </header>
+
         <div className="container mx-auto px-6 z-10 relative grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
           <div className="text-white space-y-6">
             <h1 className="text-6xl md:text-8xl font-bold tracking-tight leading-tight text-[#E8DCC4]">
