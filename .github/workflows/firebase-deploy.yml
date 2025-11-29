@@ -1,9 +1,9 @@
-name: Deploy Next.js to Firebase Hosting
+name: Deploy Next.js to Firebase Hosting (SSR)
 
 on:
   push:
     branches:
-      - main   # เปลี่ยนชื่อ branch ถ้าคุณใช้ชื่ออื่น
+      - main  # เปลี่ยนตามชื่อ branch ของคุณได้
 
 jobs:
   build-and-deploy:
@@ -13,24 +13,33 @@ jobs:
       - name: Checkout repo
         uses: actions/checkout@v4
 
-      - name: Setup Node
+      - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: "20"
+          node-version: 20
+          cache: 'npm'
 
       - name: Install dependencies
-        run: npm install
+        run: npm ci
 
-      - name: Build Next.js
-        run: npm run build
+      # 1) ตั้งค่า Service Account Credential
+      - name: Set up GCP Credentials
+        run: |
+          echo "${{ secrets.GCP_SA_KEY }}" > $HOME/gcloud.json
+          echo "GOOGLE_APPLICATION_CREDENTIALS=$HOME/gcloud.json" >> $GITHUB_ENV
 
-      - name: Install Firebase CLI
+      # 2) ลง Firebase CLI
+      - name: Install Firebase Tools
         run: npm install -g firebase-tools
 
+      # 3) Build SSR ของ Next.js
+      - name: Build Next.js (SSR)
+        run: npm run build
+
+      # 4) เปิดใช้ webframeworks experiment
       - name: Enable Firebase webframeworks experiment
         run: firebase experiments:enable webframeworks
 
-      - name: Deploy to Firebase Hosting
-        run: firebase deploy --only hosting --non-interactive --token "$FIREBASE_TOKEN"
-        env:
-          FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
+      # 5) Deploy
+      - name: Deploy to Firebase Hosting (SSR)
+        run: firebase deploy --only hosting
